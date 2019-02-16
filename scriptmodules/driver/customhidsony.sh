@@ -32,7 +32,10 @@ function _dkms_remove_customhidsony() {
 }
 
 function depends_customhidsony() {
-    depends_gamecondriver
+    local depends=(dkms)
+    isPlatform "rpi" && depends+=(raspberrypi-kernel-headers)
+    isPlatform "x11" && depends+=(linux-headers-generic)
+    getDepends "${depends[@]}"
 }
 
 function sources_customhidsony() {

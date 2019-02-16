@@ -103,4 +103,12 @@ _EOF_
     addEmulator 1 "$md_id-a500" "amiga" "$md_inst/$md_id.sh rp-a500.uae %ROM%"
     addEmulator 1 "$md_id-a1200" "amiga" "$md_inst/$md_id.sh rp-a1200.uae %ROM%"
     addSystem "amiga"
+    
+    # amigacd32
+    cp -r "$romdir/amiga" "$romdir/amigacd32"
+    cp -r "$md_conf_root/amiga" "$md_conf_root/amigacd32"
+    rm -rf "$md_conf_root/amigacd32/amiberry"
+    chown -R $user:$user "$romdir/amigacd32"
+    chown -R $user:$user "$md_conf_root/amigacd32"
+    addSystem "amigacd32"
 }

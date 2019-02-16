@@ -17,7 +17,7 @@ rp_module_section="sa"
 rp_module_flags="!armv6"
 
 function depends_reicast() {
-    local depends=(libsdl2-dev python-dev python-pip alsa-oss python-setuptools libevdev-dev)
+    local depends=(libsdl2-dev python-dev python-pip alsa-oss python-setuptools libevdev-dev libasound2-dev)
     getDepends "${depends[@]}"
     pip install evdev
 }
@@ -25,13 +25,12 @@ function depends_reicast() {
 function sources_reicast() {
     gitPullOrClone "$md_build" https://github.com/reicast/reicast-emulator.git
     isPlatform "rockpro64" && applyPatch "$md_data/rockpro64.patch"
-    sed -i "s/CXXFLAGS += -fno-rtti -fpermissive -fno-operator-names/CXXFLAGS += -fno-rtti -fpermissive -fno-operator-names -D_GLIBCXX_USE_CXX11_ABI=0/g" shell/linux/Makefile
 }
 
 function build_reicast() {
     cd shell/linux
     if isPlatform "rockpro64"; then
-        make USE_GLES=1 USE_SDL=1  platform=rockpro64 clean
+        make USE_GLES=1 USE_SDL=1 platform=rockpro64 clean
         make USE_GLES=1 USE_SDL=1 platform=rockpro64
     else
         make clean

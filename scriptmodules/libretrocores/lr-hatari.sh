@@ -30,7 +30,7 @@ function build_lr-hatari() {
     _build_libcapsimage_hatari
 
     cd "$md_build"
-    CFLAGS+=" -D__cdecl='' -DHAVE_CAPSIMAGE=1 -DCAPSIMAGE_VERSION=5" LDFLAGS+="-llibcapsimage.so.5.1" make -f Makefile.libretro
+    CFLAGS+=" -D__cdecl='' -DHAVE_CAPSIMAGE=1 -DCAPSIMAGE_VERSION=5" LDFLAGS+="-L./lib -l:libcapsimage.so.5.1" make -f Makefile.libretro
     md_ret_require="$md_build/hatari_libretro.so"
 }
 
@@ -41,10 +41,6 @@ function install_lr-hatari() {
         'readme.txt'
         'gpl.txt'
     )
-}
-
-function install_bin_lr-hatari() {
-    downloadAndExtract "$__gitbins_url/lr-hatari.tar.gz" "$md_inst" 1
 }
 
 function configure_lr-hatari() {

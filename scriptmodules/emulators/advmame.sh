@@ -53,24 +53,6 @@ function install_bin_advmame() {
 }
 
 function configure_advmame() {
-    local system
-    for system in arcade arcadia astrocade bbcmicro channelf electron mame-advmame supervision; do
-        mkRomDir "$system"
-        addSystem "$system"
-        cp "$scriptdir/configs/mame-advmame/advmess.rc" "$md_conf_root/$system/"
-    done
-    
-    mkRomDir "arcade/advmame"
-    
-    addEmulator 1 "$md_id" "arcade" "$md_inst/bin/advmame %BASENAME%"
-    addEmulator 1 "$md_id" "mame-advmame" "$md_inst/bin/advmame %BASENAME%"
-    addEmulator 1 "$md_id" "arcadia" "$md_inst/bin/advmess -cfg $md_conf_root/arcadia/advmess.rc -cart %ROM%"
-    addEmulator 1 "$md_id" "astrocade" "$md_inst/bin/advmess -cfg $md_conf_root/astrocade/advmess.rc -cart %ROM%"
-    addEmulator 1 "$md_id" "bbcmicro" "$md_inst/bin/advmess -cfg $md_conf_root/bbcmicro/advmess.rc -floppy %ROM%"
-    addEmulator 1 "$md_id" "channelf" "$md_inst/bin/advmess -cfg $md_conf_root/channelf/advmess.rc -cart %ROM%"
-    addEmulator 1 "$md_id" "electron" "$md_inst/bin/advmess -cfg $md_conf_root/electron/advmess.rc -cass %ROM%"
-    addEmulator 1 "$md_id" "supervision" "$md_inst/bin/advmess -cfg $md_conf_root/supervision/advmess.rc -cart %ROM%"
-    
     moveConfigDir "$home/.advance" "$md_conf_root/mame-advmame"
 
     # move any old named configs (with 3.2 taking priority)
@@ -114,18 +96,18 @@ function configure_advmame() {
         iniSet "dir_snap" "$romdir/mame-advmame/snap"
         iniSet "dir_sta" "$romdir/mame-advmame/nvram"
 
-        if isPlatform "mali"; then
-            iniSet "device_video" "sdl"
+        if isPlatform "rpi"; then
+            iniSet "device_video" "fb"
             iniSet "device_video_cursor" "off"
-            iniSet "device_keyboard" "sdl"
+            iniSet "device_keyboard" "raw"
             iniSet "device_sound" "alsa"
             iniSet "display_vsync" "no"
             iniSet "sound_normalize" "no"
             iniSet "display_resizeeffect" "none"
-            iniSet "display_resize" "fractional"
+            iniSet "display_resize" "integer"
             iniSet "display_magnify" "1"
-            iniSet "device_video_output" "fullscreen"
-            iniset "display_mode sdl_1920x1080"
+        else
+            iniSet "device_video_output" "overlay"
             iniSet "display_aspectx" 16
             iniSet "display_aspecty" 9
         fi
@@ -137,4 +119,31 @@ function configure_advmame() {
             iniSet "sound_samplerate" "44100"
         fi
     fi
+
+    # mame
+    addEmulator 1 "$md_id" "arcade" "$md_inst/bin/advmame %BASENAME%"
+    addEmulator 1 "$md_id" "mame-advmame" "$md_inst/bin/advmame %BASENAME%"
+    
+    local system
+    for system in arcade mame-advmame; do
+        mkRomDir "$system"
+        addSystem "$system"
+    done   
+    
+    mkRomDir "arcade/advmame"
+    
+    # mess
+    addEmulator 1 "$md_id" "arcadia" "$md_inst/bin/advmess arcadia -cfg $md_conf_root/arcadia/advmess.rc -cart %ROM%"
+    addEmulator 1 "$md_id" "astrocade" "$md_inst/bin/advmess astrocde -cfg $md_conf_root/astrocade/advmess.rc -cart %ROM%"
+    addEmulator 1 "$md_id" "bbcmicro" "$md_inst/bin/advmess bbcb -cfg $md_conf_root/bbcmicro/advmess.rc -floppy %ROM%"
+    addEmulator 1 "$md_id" "channelf" "$md_inst/bin/advmess channelf -cfg $md_conf_root/channelf/advmess.rc -cart %ROM%"
+    addEmulator 1 "$md_id" "electron" "$md_inst/bin/advmess electron -cfg $md_conf_root/electron/advmess.rc -cass %ROM%"
+    addEmulator 1 "$md_id" "supervision" "$md_inst/bin/advmess svision -cfg $md_conf_root/supervision/advmess.rc -cart %ROM%"
+     
+    local system
+    for system in arcadia astrocade bbcmicro channelf electron supervision; do
+        mkRomDir "$system"
+        addSystem "$system"
+        cp "$scriptdir/configs/mame-advmame/advmess.rc" "$md_conf_root/$system/"
+    done   
 }

@@ -1,0 +1,2 @@
+0 3 * * 0 /home/pigaming/RetroArena-Setup/scriptmodules/supplementary/autoupdate/01_setupscript
+0 3 * * 0 /home/pigaming/RetroArena-Setup/scriptmodules/supplementary/autoupdate/02_retrohub

@@ -12,6 +12,7 @@
 rp_module_id="settingsmenu"
 rp_module_desc="Settings Menu for EmulationStation"
 rp_module_section="core"
+rp_module_flags="!mali"
 
 function _update_hook_settingsmenu() {
     # to show as installed when upgrading to retroarena-setup 4.x
@@ -50,20 +51,19 @@ function configure_settingsmenu()
         "bezelproject"
         "bgmtoggle"
         "bluetooth"
-        "caseconfig"
+        #"caseconfig"
         "configedit"
         "controlreset"
         "escollections"
         "esgamelist"
         "esthemes"
-        "fancontrol"
+        #"fancontrol"
         "filemanager"
         "fruitbox"
         "hurstythemes"
         "launchingvideos"
-        "odroidconfig"
+        #"odroidconfig"
         "removemedia"
-        "retroarch"
         "rpsetup"
         "runcommand"
         "showip"
@@ -78,20 +78,19 @@ function configure_settingsmenu()
         "Media: Bezel Project"
         "Sound: BGM Toggle"
         "Network: Bluetooth"
-        "Media: Case Config for OGST"
+        #"Media: Case Config for OGST"
         "System: Configuration Editor"
         "System: Controller Reset"
         "Media: ES Collection List Generator"
         "Media: ES Gamelist Cleanup"
         "Media: ES Themes"
-        "System: Fan Control"
+        #"System: Fan Control"
         "System: File Manager"
         "Media: Jukebox Config"
         "Media: Hursty's ES Themes"
         "Media: Launching Videos"
-        "System: Odroid-Config"
+        #"System: Odroid-Config"
         "Media: Remove Media"
-        "System: Retroarch"
         "System: RetroArena-Setup"
         "System: Runcommand Config"
         "Network: Show IP"
@@ -106,7 +105,7 @@ function configure_settingsmenu()
         "Downloader for RetroArach system bezel packs to be used for various systems"
         "Enable or disable the background music feature."
         "Register and connect to bluetooth devices. Unregister and remove devices, and display registered and connected devices."
-        "Install themes for the OGST Case when 'Console System' is selected. In addition, upon game launch, choose different types of scraped images displayed such as boxart, cartart, snap, wheel, screenshot, marquee, or console system (default). There is also an option to completely disable the display."
+        #"Install themes for the OGST Case when 'Console System' is selected. In addition, upon game launch, choose different types of scraped images displayed such as boxart, cartart, snap, wheel, screenshot, marquee, or console system (default). There is also an option to completely disable the display."
         "Change common RetroArch options, and manually edit RetroArch configs, global configs, and non-RetroArch configs."
         "Reset controller configurations to factory default.
         
@@ -118,22 +117,19 @@ NOTE: This utility only works with rom files using the No-Intro naming conventio
 
 NOTE: Always make a backup copy of your 'gamelist.xml' and media files before making changes to your system."
         "Install, uninstall, or update EmulationStation themes."
-        "Change the fan settings to control cooling and fan noise."
+        #"Change the fan settings to control cooling and fan noise."
         "Basic ascii file manager for linux allowing you to browse, copy, delete, and move files.
         
 NOTE: Requires a keyboard to be connected."
         "Configure the default skin and gamepad for Fruitbox jukebox."
         "Install, uninstall, or update Hursty's ES themes. Also, enable or disable the Theme Randomizer on boot option."
         "Enable, disable, or update Launching Videos, which plays a video instead of an image during game launch."
-        "Expand filesystem, configure network, boot, localisation, SSH, etc.
-        
-NOTE: This menu is EXPERIMENTAL. Use at your own risk and be sure to backup your image!"
+        #"Expand filesystem, configure network, boot, localisation, SSH, etc.
+#        
+#NOTE: This menu is EXPERIMENTAL. Use at your own risk and be sure to backup your image!"
         "Remove extra media files (boxart, cartart, snap, and wheel) for a chosen system where there is not a matching game for it. If you keep your media for MAME or Final Burn Alpha in the 'roms/arcade' folder, there is a special choice just for that.
 
 NOTE: Always make a backup copy of your SD card and your roms and media files before making changes to your system."
-        "Launches the RetroArch GUI so you can change RetroArch options.
-        
-NOTE: Changes will not be saved unless you have enabled the 'Save Configuration On Exit' option."
         "Update Setup Script, install/uninstall Libretro and standalone emulators, ports, drivers, scrapers, and configurations."
         "Change what appears on the runcommand screen. Enable or disable the menu, enable or disable box art, and change CPU configuration."
         "Displays your current IP address, as well as other information provided by the command, 'ip addr show.'"
@@ -154,19 +150,18 @@ NOTE: Requires a keyboard to be connected."
         "true"
         "false"
         "true"
+        #"true"
         "true"
         "true"
         "true"
         "true"
         "true"
+        #"true"
         "true"
         "true"
         "true"
         "true"
-        "true"
-        "true"
-        "true"
-        "true"
+        #"true"
         "true"
         "true"
         "true"
@@ -223,14 +218,6 @@ function launch_settingsmenu() {
     local no_ext="${basename%.rp}"
     joy2keyStart
     case "$basename" in
-        retroarch.rp)
-            joy2keyStop
-            cp "$configdir/all/retroarch.cfg" "$configdir/all/retroarch.cfg.bak"
-            chown $user:$user "$configdir/all/retroarch.cfg.bak"
-            su $user -c "\"$emudir/retroarch/bin/retroarch\" --menu --config \"$configdir/all/retroarch.cfg\""
-            iniConfig " = " '"' "$configdir/all/retroarch.cfg"
-            iniSet "config_save_on_exit" "false"
-            ;;
         rpsetup.rp)
             rp_callModule setup gui
             ;;
@@ -259,4 +246,31 @@ function launch_settingsmenu() {
     esac
     joy2keyStop
     clear
+}
+
+function gui_settingsmenu() {
+    while true; do
+        local options=(
+            1 "Install default icon set"
+            2 "Install cart style icon set"
+        )
+        local cmd=(dialog --default-item "$default" --backtitle "$__backtitle" --menu "Choose an option" 22 76 16)
+        local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+        default="$choice"
+        [[ -z "$choice" ]] && break
+        case "$choice" in
+            1)
+                rm -rf "$datadir/settingsmenu/icons"
+                cp -r "$scriptdir/scriptmodules/supplementary/settingsmenu/icons" "$datadir/settingsmenu/icons"
+                chown -R $user:$user "$datadir/settingsmenu/icons"
+                printMsgs "dialog" "Settings menu default icons installed\n\nRestart EmulationStation to apply."
+                ;;
+            2)
+                rm -rf "$datadir/settingsmenu/icons"
+                cp -r "$scriptdir/scriptmodules/supplementary/settingsmenu/icons_cart" "$datadir/settingsmenu/icons"
+                chown -R $user:$user "$datadir/settingsmenu/icons"
+                printMsgs "dialog" "Settings menu cart icons installed.\n\nRestart EmulationStation to apply."
+                ;;
+        esac
+    done
 }
