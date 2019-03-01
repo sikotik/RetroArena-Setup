@@ -186,6 +186,26 @@ NOTE: This menu is EXPERIMENTAL. Use at your own risk and be sure to backup your
             "true"
         )
     fi
+    
+    if isPlatform "odroid-n2"; then
+        local files+=(
+            "odroidconfig"
+        )
+        
+        local names+=(
+            "System: Odroid-Config"
+        )
+        
+        local desc+=(
+            "Expand filesystem, configure network, boot, localisation, SSH, etc.
+            
+NOTE: This menu is EXPERIMENTAL. Use at your own risk and be sure to backup your image!"
+        )
+        
+        local hiddens+=(
+            "true"
+        )
+    fi
 
     setESSystem "RetroArena" "retroarena" "$rpdir" ".rp .sh" "sudo $scriptdir/retroarena_packages.sh settingsmenu launch %ROM% </dev/tty >/dev/tty" "" "retroarena"
 
@@ -266,7 +286,8 @@ function gui_settingsmenu() {
     while true; do
         local options=(
             1 "Install default icon set"
-            2 "Install cart style icon set"
+            2 "Install cart style 1 icon set"
+            3 "Install cart style 2 icon set"
         )
         local cmd=(dialog --default-item "$default" --backtitle "$__backtitle" --menu "Choose an option" 22 76 16)
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
@@ -283,7 +304,13 @@ function gui_settingsmenu() {
                 rm -rf "$datadir/settingsmenu/icons"
                 cp -r "$scriptdir/scriptmodules/supplementary/settingsmenu/icons_cart" "$datadir/settingsmenu/icons"
                 chown -R $user:$user "$datadir/settingsmenu/icons"
-                printMsgs "dialog" "Settings menu cart icons installed.\n\nRestart EmulationStation to apply."
+                printMsgs "dialog" "Settings menu cart style 1 icons installed.\n\nRestart EmulationStation to apply."
+                ;;
+            3)
+                rm -rf "$datadir/settingsmenu/icons"
+                cp -r "$scriptdir/scriptmodules/supplementary/settingsmenu/icons_cart2" "$datadir/settingsmenu/icons"
+                chown -R $user:$user "$datadir/settingsmenu/icons"
+                printMsgs "dialog" "Settings menu cart style 2 icons installed.\n\nRestart EmulationStation to apply."
                 ;;
         esac
     done
