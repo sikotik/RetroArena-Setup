@@ -21,15 +21,15 @@ function depends_creativision() {
     getDepends "${depends[@]}"
 }
 
-	function sources_creativision() {
+function sources_creativision() {
     gitPullOrClone "$md_build" https://github.com/sikotik/Creativision.git
 }
 
 function build_creativision() {
-cd "$md_build"
-mkdir build && cd build
-cmake –G “Unix Makefiles” ../ && make 
-md_ret_require="$md_build/build/creatiVision"
+    cd "$md_build"
+    mkdir build && cd build
+    cmake –G “Unix Makefiles” ../ && make
+    md_ret_require="$md_build/build/creatiVision"
 }
 
 function install_creativision() {
@@ -38,14 +38,18 @@ function install_creativision() {
     )
 }
 
+function install_bin_creativision() {
+    downloadAndExtract "$__gitbins_url/creativision.tar.gz" "$md_inst" 1
+}
+
 function configure_creativision() {
     mkRomDir "crvision"
     mkUserDir "$md_conf_root/crvision"
 	mkUserDir "$biosdir/crvision"
 	
     addEmulator 1 "${md_id}-crvision"  "crvision" "$md_inst/creatiVision -f -b /home/pigaming/RetroArena/BIOS/crvision/bioscv.rom -r %ROM%"
-	addEmulator 0 "${md_id}-cslmode"  "crvision" "$md_inst/creatiVision -f -k -2 -b /home/pigaming/RetroArena/BIOS/crvision/cslbios.rom -r %ROM%"
-	addEmulator 0 "${md_id}-saloramanager" "crvision" "$md_inst/creatiVision -f -k -3 -b /home/pigaming/RetroArena/BIOS/crvision/saloram.rom -r %ROM%"
-	addEmulator 0 "${md_id}-laser2001" "crvision" "$md_inst/creatiVision -f -3 -b /home/pigaming/RetroArena/BIOS/crvision/laser2001.rom -r %ROM%"
+    addEmulator 0 "${md_id}-cslmode"  "crvision" "$md_inst/creatiVision -f -k -2 -b /home/pigaming/RetroArena/BIOS/crvision/cslbios.rom -r %ROM%"
+    addEmulator 0 "${md_id}-saloramanager" "crvision" "$md_inst/creatiVision -f -k -3 -b /home/pigaming/RetroArena/BIOS/crvision/saloram.rom -r %ROM%"
+    addEmulator 0 "${md_id}-laser2001" "crvision" "$md_inst/creatiVision -f -3 -b /home/pigaming/RetroArena/BIOS/crvision/laser2001.rom -r %ROM%"
     addSystem "crvision"
 }
