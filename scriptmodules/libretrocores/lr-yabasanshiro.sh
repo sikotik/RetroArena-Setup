@@ -17,17 +17,16 @@ rp_module_section="lr"
 rp_module_flags="!armv6 !rockpro64"
 
 function sources_lr-yabasanshiro() {
-    #gitPullOrClone "$md_build" https://github.com/devmiyax/yabause.git libretro
-    gitPullOrClone "$md_build" https://github.com/barbudreadmon/yabause.git libretro
+    #gitPullOrClone "$md_build" https://github.com/libretro/yabause.git yabasanshiro
+    gitPullOrClone "$md_build" https://github.com/devmiyax/yabause.git minimum_linux
     cd "$md_build/yabause"
 }
 
 function build_lr-yabasanshiro() {
-    make -C yabause/src/libretro generate-files
     if isPlatform "odroid-n2"; then
-        make -j5 -C yabause/src/libretro platform=odroid-n2
+        CC=clang-7 CXX=clang++-7 make -j5 -C yabause/src/libretro/ platform=odroid-n2
     elif isPlatform "odroid-xu"; then
-        make -j5 -C yabause/src/libretro platform=odroid BOARD="ODROID-XU3"
+        CC=clang-7 CXX=clang++-7 make -j5 -C yabause/src/libretro/ platform=odroid BOARD="ODROID-XU3"
     else
         exit
     fi
@@ -49,4 +48,13 @@ function configure_lr-yabasanshiro() {
     ensureSystemretroconfig "saturn"
     addEmulator 1 "$md_id" "saturn" "$md_inst/yabasanshiro_libretro.so"
     addSystem "saturn"
+    
+    # set core options
+    setRetroArchCoreOption "${dir_name}yabasanshiro_addon_cart" "4M_extended_ram"
+    setRetroArchCoreOption "${dir_name}yabasanshiro_force_hle_bios" "disabled"
+    setRetroArchCoreOption "${dir_name}yabasanshiro_frameskip" "enabled"
+    setRetroArchCoreOption "${dir_name}yabasanshiro_multitap_port1" "disabled"
+    setRetroArchCoreOption "${dir_name}yabasanshiro_multitap_port2" "disabled"
+    setRetroArchCoreOption "${dir_name}yabasanshiro_resolution_mode" "2x"
+    setRetroArchCoreOption "${dir_name}yabasanshiro_videoformattype" "NTSC"
 }
