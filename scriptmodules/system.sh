@@ -196,7 +196,7 @@ function get_os_version() {
 }
 
 function get_retroarena_depends() {
-    local depends=(git dialog wget gcc g++ build-essential unzip xmlstarlet python-pyudev ca-certificates)
+    local depends=(git dialog wget gcc g++ build-essential unzip xmlstarlet python-pyudev ca-certificates dos2unix)
 
     if ! getDepends "${depends[@]}"; then
         fatalError "Unable to install packages required by $0 - ${md_ret_errors[@]}"
@@ -345,7 +345,7 @@ function platform_odroid-c2() {
 }
 
 function platform_odroid-n2() {
-    __default_cflags="-O2 -march=native -mtune=cortex-a73.cortex-a53"
+    __default_cflags="-O2 -march=armv8-a+crc -mcpu=cortex-a73 -mtune=cortex-a73.cortex-a53 -ftree-vectorize -funsafe-math-optimizations -pipe"
     __platform_flags="aarch64 mali gles"
     __default_cflags+=" -ftree-vectorize -funsafe-math-optimizations"
     __default_asflags=""
@@ -378,7 +378,7 @@ function platform_rock64() {
 }
 
 function platform_rockpro64() {
-    __default_cflags="-O2 -march=armv8-a+crc -mtune=cortex-a72.cortex-a53 -mfpu=neon-fp-armv8"
+    __default_cflags="-O2 -march=armv8-a+crc -mcpu=cortex-a72 -mtune=cortex-a72.cortex-a53 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations -pipe"
     __platform_flags="arm armv8 neon kms gles"
     __default_cflags+=" -ftree-vectorize -funsafe-math-optimizations"
     # required for mali headers to define GL functions!

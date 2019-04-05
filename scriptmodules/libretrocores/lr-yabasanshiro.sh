@@ -14,19 +14,21 @@ rp_module_desc="Sega Saturn Emulator"
 rp_module_help="ROM Extensions: .iso .bin .zip\n\nCopy your Sega Saturn roms to $romdir/saturn\n\nCopy the required BIOS file saturn_bios_us.bin and saturn_bios_jp.bin to $biosdir"
 rp_module_licence="https://github.com/devmiyax/yabause/blob/minimum_linux/yabause/COPYING"
 rp_module_section="lr"
-rp_module_flags="!armv6 !rockpro64"
+rp_module_flags=""
 
 function sources_lr-yabasanshiro() {
-    #gitPullOrClone "$md_build" https://github.com/libretro/yabause.git yabasanshiro
-    gitPullOrClone "$md_build" https://github.com/devmiyax/yabause.git minimum_linux
+    #gitPullOrClone "$md_build" https://github.com/devmiyax/yabause.git minimum_linux
+    gitPullOrClone "$md_build" https://github.com/libretro/yabause.git yabasanshiro
     cd "$md_build/yabause"
 }
 
 function build_lr-yabasanshiro() {
     if isPlatform "odroid-n2"; then
-        CC=clang-7 CXX=clang++-7 make -j5 -C yabause/src/libretro/ platform=odroid-n2
+        make -j5 -C yabause/src/libretro/ platform=odroid-n2
     elif isPlatform "odroid-xu"; then
-        CC=clang-7 CXX=clang++-7 make -j5 -C yabause/src/libretro/ platform=odroid BOARD="ODROID-XU3"
+        make -j5 -C yabause/src/libretro/ platform=odroid BOARD="ODROID-XU3"
+    elif isPlatform "rockpro64"; then       
+        make -j5 -C yabause/src/libretro/ platform=rockpro64
     else
         exit
     fi
@@ -52,9 +54,10 @@ function configure_lr-yabasanshiro() {
     # set core options
     setRetroArchCoreOption "${dir_name}yabasanshiro_addon_cart" "4M_extended_ram"
     setRetroArchCoreOption "${dir_name}yabasanshiro_force_hle_bios" "disabled"
-    setRetroArchCoreOption "${dir_name}yabasanshiro_frameskip" "enabled"
+    setRetroArchCoreOption "${dir_name}yabasanshiro_frameskip" "disabled"
     setRetroArchCoreOption "${dir_name}yabasanshiro_multitap_port1" "disabled"
     setRetroArchCoreOption "${dir_name}yabasanshiro_multitap_port2" "disabled"
     setRetroArchCoreOption "${dir_name}yabasanshiro_resolution_mode" "2x"
+    setRetroArchCoreOption "${dir_name}yabasanshiro_sh2coretype" "dynarec"
     setRetroArchCoreOption "${dir_name}yabasanshiro_videoformattype" "NTSC"
 }
