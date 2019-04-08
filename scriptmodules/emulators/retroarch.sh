@@ -16,24 +16,8 @@ rp_module_section="core"
 
 function depends_retroarch() {
     local depends=(libudev-dev libxkbcommon-dev libsdl2-dev libasound2-dev libusb-1.0-0-dev libpulse-dev)
-    isPlatform "rpi" && depends+=(libraspberrypi-dev)
-    isPlatform "odroid-xu" && params+=(--enable-mali_fbdev)
-    isPlatform "rock64" && depends+=(libmali-rk-dev)
-    isPlatform "x11" && depends+=(libx11-xcb-dev libpulse-dev libvulkan-dev)
-    isPlatform "vero4k" && depends+=(vero3-userland-dev-osmc zlib1g-dev libfreetype6-dev)
-
-    if compareVersions "$__os_debian_ver" ge 9; then
-        depends+=(libavcodec-dev libavformat-dev libavdevice-dev)
-    fi
-    # only install nvidia-cg-toolkit if it is available (as the non-free repo may not be enabled)
-    if isPlatform "x86"; then
-        if [[ -n "$(apt-cache search --names-only nvidia-cg-toolkit)" ]]; then
-            depends+=(nvidia-cg-toolkit)
-        fi
-    fi
-
+    isPlatform "mali" && depends+=(mali-fbdev)
     getDepends "${depends[@]}"
-
     addUdevInputRules
 }
 
@@ -44,21 +28,14 @@ function sources_retroarch() {
     applyPatch "$md_data/03_disable_udev_sort.diff"
 }
 
-function build_retroarch() {
-   
+function build_retroarch() {  
     local params=(--disable-sdl --enable-sdl2 --disable-oss --disable-al --disable-jack --disable-qt --enable-pulse)
     ! isPlatform "x11" && params+=(--disable-x11 --disable-wayland --disable-kms)
-    if compareVersions "$__os_debian_ver" lt 9; then
-        params+=(--disable-ffmpeg)
-    fi
     isPlatform "gles" && params+=(--enable-opengles --enable-opengles3)
-    isPlatform "rpi" && params+=(--enable-dispmanx)
     isPlatform "mali" && params+=(--enable-mali_fbdev)
     isPlatform "kms" && params+=(--enable-kms)
     isPlatform "arm" && params+=(--enable-floathard)
     isPlatform "neon" && params+=(--enable-neon)
-    isPlatform "x11" && params+=(--enable-vulkan)
-    isPlatform "vero4k" && params+=(--enable-mali_fbdev --with-opengles_libs='-L/opt/vero3/lib')
        
     ./configure --prefix="$md_inst" "${params[@]}"
     make clean
@@ -109,7 +86,7 @@ function update_assets_retroarch() {
     local dir="$configdir/all/retroarch/assets"
     # remove if not a git repository for fresh checkout
     [[ ! -d "$dir/.git" ]] && rm -rf "$dir"
-    gitPullOrClone "$dir" https://github.com/libretro/retroarch-assets.git
+    gitPullOrClone "$dir" https://github.com/libretro/retroarch-assets.git master dec1fb1
     chown -R $user:$user "$dir"
 }
 
