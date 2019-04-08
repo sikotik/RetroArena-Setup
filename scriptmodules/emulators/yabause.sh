@@ -16,6 +16,11 @@ rp_module_licence="https://github.com/devmiyax/yabause/blob/minimum_linux/yabaus
 rp_module_section="sa"
 rp_module_flags=""
 
+function depends_yabause() {
+    local depends=(cmake libgles2-mesa-dev libsdl2-dev libboost-filesystem-dev libboost-system-dev libboost-locale-dev libboost-date-time-dev)
+    getDepends "${depends[@]}"
+}
+
 function sources_yabause() {    
     gitPullOrClone "$md_build" https://github.com/devmiyax/yabause.git minimum_linux
 }
@@ -58,4 +63,9 @@ function configure_yabause() {
     addEmulator 1 "${md_id}-2x-fs" "saturn" "$md_inst/yabasanshiro -a -r 2 -b /home/pigaming/RetroArena/BIOS/saturn_bios.bin -i %ROM%"
     addEmulator 1 "${md_id}-4x-fs" "saturn" "$md_inst/yabasanshiro -a -r 1 -b /home/pigaming/RetroArena/BIOS/saturn_bios.bin -i %ROM%"
     addSystem "saturn"
+    
+    if isPlatform "odroid-n2"; then
+        cd $HOME/mali
+        sudo ./install.sh
+    fi
 }

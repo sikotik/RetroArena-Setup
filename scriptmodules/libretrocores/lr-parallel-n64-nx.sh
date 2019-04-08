@@ -9,63 +9,57 @@
 # at https://raw.githubusercontent.com/Retro-Arena/RetroArena-Setup/master/LICENSE.md
 #
 
-rp_module_id="lr-parallel-n64"
-rp_module_desc="N64 emu - Highly modified Mupen64Plus port for libretro"
+rp_module_id="lr-parallel-n64-nx"
+rp_module_desc="N64 emu - Highly modified Mupen64Plus port for libretro nx"
 rp_module_help="ROM Extensions: .z64 .n64 .v64\n\nCopy your N64 roms to $romdir/n64"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/parallel-n64/master/mupen64plus-core/LICENSES"
 rp_module_section="lr"
 
-function depends_lr-parallel-n64() {
+function depends_lr-parallel-n64-nx() {
     local depends=()
     isPlatform "x11" && depends+=(libgl1-mesa-dev)
     isPlatform "rpi" && depends+=(libraspberrypi-dev)
     getDepends "${depends[@]}"
 }
 
-function sources_lr-parallel-n64() {
-    local branch"master"
-    local commit=""
-    # build from ab155da1 due to https://github.com/libretro/parallel-n64/issues/544
-    isPlatform "arm" && commit="ab155da1"
-    gitPullOrClone "$md_build" https://github.com/libretro/parallel-n64.git "$branch" "$commit"
-    isPlatform "rockpro64" && applyPatch "$md_data/rockpro64.patch"
+function sources_lr-parallel-n64-nx() {
+   gitPullOrClone "$md_build" https://github.com/sikotik/paraLLeXT.git 
+    
 }
 
-function build_lr-parallel-n64() {
+function build_lr-parallel-n64-nx() {
     rpSwap on 1000
     make clean
     local params=()
     if isPlatform "rockpro64" || isPlatform "odroid-xu"; then
         params+=(platform="$__platform")
     elif isPlatform "odroid-n2"; then
-        params+=(CPUFLAGS="-DNO_ASM -DARM -DARM_ASM -DDONT_WANT_ARM_OPTIMIZATIONS -DARM_FIX -DARM64 -D__NEON_OPT")
-        params+=(platform=unix)
-        params+=(FORCE_GLES=1 WITH_DYNAREC=aarch64 HAVE_NEON=1)
+        params+=(platform="unix $_platform")
     fi
     make "${params[@]}"
     rpSwap off
-    md_ret_require="$md_build/parallel_n64_libretro.so"
+    md_ret_require="$md_build/parallel_n64-nx_libretro.so"
 }
 
-function install_lr-parallel-n64() {
+function install_lr-parallel-n64-nx() {
     md_ret_files=(
-        'parallel_n64_libretro.so'
+        'parallel_n64-nx_libretro.so'
         'README.md'
     )
 }
 
-function install_bin_lr-parallel-n64() {
-    downloadAndExtract "$__gitbins_url/lr-parallel-n64.tar.gz" "$md_inst" 1
+function install_bin_lr-parallel-n64-nx() {
+    downloadAndExtract "$__gitbins_url/lr-parallel-n64-nx.tar.gz" "$md_inst" 1
 }
 
-function configure_lr-parallel-n64() {
+function configure_lr-parallel-n64-nx() {
     mkRomDir "n64"
     ensureSystemretroconfig "n64"
 
     # Set core options
-    setRetroArchCoreOption "parallel-n64-gfxplugin" "auto"
-    setRetroArchCoreOption "parallel-n64-gfxplugin-accuracy" "low"
-    setRetroArchCoreOption "parallel-n64-screensize" "640x480"
+    setRetroArchCoreOption "parallel-n64-nx-gfxplugin" "auto"
+    setRetroArchCoreOption "parallel-n64-nx-gfxplugin-accuracy" "low"
+    setRetroArchCoreOption "parallel-n64-nx-screensize" "640x480"
 
     # Copy config files
     cat > $datadir/BIOS/gles2n64rom.conf << _EOF_
@@ -172,6 +166,6 @@ target FPS=25
 _EOF_
     chown $user:$user "$biosdir/gles2n64rom.conf"
 
-    addEmulator 0 "$md_id" "n64" "$md_inst/parallel_n64_libretro.so"
+    addEmulator 0 "$md_id" "n64" "$md_inst/parallel_n64-nx_libretro.so"
     addSystem "n64"
 }
