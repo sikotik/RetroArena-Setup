@@ -112,7 +112,7 @@ function retroarena_welcome() {
                 out+="${fgred}Running Processes..: $(ps ax | wc -l | tr -d " ")"
                 ;;
             8)
-                out+="${fgred}IP Address.........: $(ip route get 8.8.8.8 2>/dev/null | awk '{print $NF; exit}')"
+                out+="${fgred}IP Address.........: $(hostname -I | awk '{print $1}')"
                 ;;
             9)
                 out+="${fgred}Temperature........: CPU: $cpuTempC°C/$cpuTempF°F GPU: $gpuTempC°C/$gpuTempF°F${fgwht}"
@@ -124,10 +124,22 @@ function retroarena_welcome() {
 }
 
 retroarena_welcome
+# Common Aliases
+alias alsa='alsamixer'
+alias autostart='sudo nano /opt/retroarena/configs/all/autostart.sh'
+alias configs='cd /opt/retroarena/configs'
+alias fixmali='cd mali && sudo ./install.sh && cd ~'
+alias fstab='sudo nano /etc/fstab'
+alias gitreset='cd RetroArena-Setup && git reset --hard && git clean -f -d && cd ~'
+alias ifconfig='ip address'
+alias log='sudo nano /dev/shm/runcommand.log'
+alias rclocal='sudo nano /etc/rc.local'
+alias reboot='sudo reboot -h now'
+alias setup='sudo ~/RetroArena-Setup/retroarena_setup.sh'
+alias shutdown='sudo shutdown -h now'
+alias upgrade='sudo apt-get update && sudo apt-get upgrade -y'
 # RETROARENA PROFILE END
 _EOF_
-
-
 }
 
 function remove_bashwelcometweak() {
